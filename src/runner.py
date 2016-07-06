@@ -16,5 +16,6 @@ if __name__ == '__main__':
     corpus = Corpus("labeledTrainData.tsv")
     gamma_theta = np.full(corpus.V, gamma_theta_val)
     model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus.W_D_matrix.shape[0], corpus)
-    print(model_state.sample_L(44))
+    model_state.sample_L()
+    #model_state.sample_Theta0()
     print("finish running")

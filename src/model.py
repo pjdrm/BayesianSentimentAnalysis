@@ -68,19 +68,21 @@ class ModelState(object):
             factor2_log_L0 += np.log(self.theta0[i])*self.corpus.W_D_matrix[j, i]
             factor2_log_L1 += np.log(self.theta1[i])*self.corpus.W_D_matrix[j, i]
         '''
-        factor2_log_L0 = (np.log(self.theta0)*self.corpus.W_D_matrix[j].toarray()).sum(1)
-        factor2_log_L1 = (np.log(self.theta1)*self.corpus.W_D_matrix[j].toarray()).sum(1)
+        factor2_log_L0 = (np.log(self.theta0)*self.corpus.W_D_matrix[j].toarray()).sum(1)[0]
+        factor2_log_L1 = (np.log(self.theta1)*self.corpus.W_D_matrix[j].toarray()).sum(1)[0]
         
         log_val0 = factor1_log_L0 + factor2_log_L0
         log_val1 = factor1_log_L1 + factor2_log_L1
+        print("log_val0 %s logaddexp(log_val0, log_val1) %s" % (str(log_val0), str(np.logaddexp(log_val0, log_val1))))
+        print("log_val1 %s logaddexp(log_val0, log_val1) %s" % (str(log_val1), str(np.logaddexp(log_val0, log_val1))))
         
         post_L0 = np.exp(log_val0 - np.logaddexp(log_val0, log_val1))
         post_L1 = np.exp(log_val1 - np.logaddexp(log_val0, log_val1))
-        print("factor1_log_L0: %s factor2_log_L0 %s post_L0: %s" % (str(factor1_log_L0), str(factor2_log_L0), str(post_L0)[1:-1]))
-        print("factor1_log_L1: %s factor2_log_L1 %s post_L1: %s" % (str(factor1_log_L1), str(factor2_log_L1), str(post_L1)[1:-1]))
+        print("factor1_log_L0: %s factor2_log_L0 %s post_L0: %s" % (str(factor1_log_L0), str(factor2_log_L0), str(post_L0)))
+        print("factor1_log_L1: %s factor2_log_L1 %s post_L1: %s" % (str(factor1_log_L1), str(factor2_log_L1), str(post_L1)))
         if post_L0 == 0.0 or post_L1 == 0.0:
             print("")
-        coin_weight = sample_beta(post_L0, post_L1)
+        coin_weight = sample_beta(post_L1, post_L0)
         print("post_pi: %f" % (coin_weight))
         Lj_new = sample_bernouli(coin_weight, 1)
         self.L[j] = Lj_new

@@ -40,10 +40,10 @@ class ModelState(object):
         
             
     def sample_L(self):
-        print("current L\n %s" % (str(self.L)))
-        post_L = [self.sample_Lj(j) for j in range(len(self.L))]
-        self.L = post_L
-        print("postL\n%s" % (str(self.L)))
+        #prevL = np.copy(self.L)
+        for j in range(len(self.L)):
+            self.sample_Lj(j)
+        #print("L diff %f" % ((prevL - self.L).sum(1)))
         
     def sample_Lj(self, j):
         if self.L[j] == 0:
@@ -81,7 +81,7 @@ class ModelState(object):
         print("factor1_log_L0: %s factor2_log_L0 %s post_L0: %s" % (str(factor1_log_L0), str(factor2_log_L0), str(post_L0)))
         print("factor1_log_L1: %s factor2_log_L1 %s post_L1: %s" % (str(factor1_log_L1), str(factor2_log_L1), str(post_L1)))
         if post_L0 == 0.0 or post_L1 == 0.0:
-            print("")
+            print("doc %i" % (j))
         coin_weight = sample_beta(post_L1, post_L0)
         print("post_pi: %f" % (coin_weight))
         Lj_new = sample_bernouli(coin_weight, 1)

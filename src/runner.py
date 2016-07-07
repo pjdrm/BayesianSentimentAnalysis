@@ -9,9 +9,9 @@ import numpy as np
 
 
 if __name__ == '__main__':
-    gamma_pi0 = 0.1
-    gamma_pi1 = 0.1
-    gamma_theta_val = 0.2
+    gamma_pi0 = 1
+    gamma_pi1 = 1
+    gamma_theta_val = 1
     
     corpus = Corpus("labeledTrainData.tsv")
     gamma_theta = np.full(corpus.V, gamma_theta_val)

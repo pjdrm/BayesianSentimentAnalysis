@@ -16,6 +16,11 @@ if __name__ == '__main__':
     corpus = Corpus("labeledTrainData.tsv")
     gamma_theta = np.full(corpus.V, gamma_theta_val)
     model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus.W_D_matrix.shape[0], corpus)
-    model_state.sample_L()
-    #model_state.sample_Theta0()
+    #model_state.sample_L()
+    #model_state.sample_Theta1()
+    
+    n_iter = 15
+    burn_in = -1
+    lag = -1
+    model_state.gibbs_sampler(n_iter, burn_in, lag)
     print("finish running")

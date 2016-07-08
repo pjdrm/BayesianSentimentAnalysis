@@ -5,9 +5,15 @@ Created on Jun 17, 2016
 '''
 from dist_sampler import sample_bernouli, sample_beta, sample_dirichlet
 import numpy as np
+from sklearn.metrics import classification_report, f1_score
+import os.path
 
 class ModelState(object):
-    def __init__(self, gamma_pi0, gamma_pi1, gamma_theta, N, corpus):
+    def __init__(self, gamma_pi0, gamma_pi1, gamma_theta, N, corpus, results_file):
+        self.results_file = results_file
+        if os.path.isfile(results_file):
+            os.remove(results_file)   
+            
         self.corpus = corpus
         self.N = N
         self.L = np.zeros(N)
@@ -114,12 +120,37 @@ class ModelState(object):
         return sample_dirichlet(t)
     
     def gibbs_sampler(self, n_iter, burn_in, lag):
-        for i in range(n_iter):
-            print("Gibbs sampler iter %d" % (i))
+        lag_counter = lag
+        iteration = 1
+        while iteration <= n_iter:
+            print("Gibbs sampler iter %d" % (iteration))
             self.sample_L()
             self.sample_Theta0()
             self.sample_Theta1()
-        
+            print("C0 %f C1 %f"  % (self.C0, self.C1))
+            
+            if burn_in > 0:
+                print("Burn in iteration")
+                burn_in -= 1
+            else:
+                if lag_counter > 0:
+                    print("Lag iteration")
+                    lag_counter -= 1
+                else:
+                    print("Estimate iteration")
+                    lag_counter = lag
+                    self.estimated_L += self.L
+                    
+                    with open(self.results_file, "a") as f:
+                        current_estimated_L = np.rint(self.estimated_L / iteration)
+                        f.write(str(f1_score(self.corpus.sent_labels, current_estimated_L))+"\n")
+                        
+                    iteration += 1
+                
+        self.estimated_L /= iteration
+        self.estimated_L = np.rint(self.estimated_L)
+        target_names = ['L0', 'L1']
+        print(classification_report(self.corpus.sent_labels, self.estimated_L, target_names=target_names))
         '''
         self.sample_L()
         self.sample_Theta0()

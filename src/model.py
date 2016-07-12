@@ -7,9 +7,11 @@ from dist_sampler import sample_bernouli, sample_beta, sample_dirichlet
 import numpy as np
 from sklearn.metrics import classification_report, f1_score
 import os.path
+from pympler.tracker import SummaryTracker
 
 class ModelState(object):
     def __init__(self, gamma_pi0, gamma_pi1, gamma_theta, N, corpus, results_file):
+    
         self.results_file = results_file
         if os.path.isfile(results_file):
             os.remove(results_file)   
@@ -65,17 +67,8 @@ class ModelState(object):
         #Computing for x = 1 (Lj = 1)
         factor1_log_L1 = np.log((self.C1 + self.gamma_pi1 - 1.0) / (self.C1 + self.C0 + self.gamma_pi0 + self.gamma_pi1 - 1.0))
         
-        '''
-        factor2_log_L0 = 0.0
-        factor2_log_L1 = 0.0
-        for i in range(self.corpus.V):  
-            #print(factor2_log_L0)
-            factor2_log_L0 += np.log(self.theta0[i])*self.corpus.W_D_matrix[j, i]
-            factor2_log_L1 += np.log(self.theta1[i])*self.corpus.W_D_matrix[j, i]
-        '''
-        
-        factor2_log_L0 = (np.log(self.theta0)*self.corpus.W_D_matrix[j].toarray()).sum(1)[0]
-        factor2_log_L1 = (np.log(self.theta1)*self.corpus.W_D_matrix[j].toarray()).sum(1)[0]
+        factor2_log_L0 = self.corpus.W_D_matrix[j].dot(np.log(self.theta0))
+        factor2_log_L1 = self.corpus.W_D_matrix[j].dot(np.log(self.theta1))
         
         log_val0 = factor1_log_L0 + factor2_log_L0
         log_val1 = factor1_log_L1 + factor2_log_L1
@@ -91,7 +84,9 @@ class ModelState(object):
         coin_weight = sample_beta(post_L1, post_L0)
         #print("post_pi: %s" % (str(coin_weight)))
         Lj_new = sample_bernouli(coin_weight, 1)
+        
         self.L[j] = Lj_new
+        
         if Lj_new == 0:
             self.C0 += 1
             self.word_counts_L0 += self.corpus.W_D_matrix[j]
@@ -122,16 +117,24 @@ class ModelState(object):
     def gibbs_sampler(self, n_iter, burn_in, lag):
         lag_counter = lag
         iteration = 1
+        tracker = SummaryTracker()
         while iteration <= n_iter:
             print("Gibbs sampler iter %d" % (iteration))
+            #tracker.print_diff()
+            #print("L")
             self.sample_L()
+            #tracker.print_diff()
+            #print("Theta")
             self.sample_Theta0()
             self.sample_Theta1()
+            #tracker.print_diff()
             print("C0 %f C1 %f"  % (self.C0, self.C1))
             
             if burn_in > 0:
-                print("Burn in iteration")
+                print("Burn in iteration %i" % (burn_in))
                 burn_in -= 1
+                if burn_in < 4700:
+                    print()
             else:
                 if lag_counter > 0:
                     print("Lag iteration")

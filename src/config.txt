@@ -1,0 +1,11 @@
+{
+	"max_features": 2000.0,
+	"gamma_pi0": 1.0,
+	"gamma_pi1": 1.0,
+	"gamma_theta_val": 1.0,
+	"n_iter": 50000,
+	"burn_in": 5000,
+	"lag": 25,
+	"results_file": "results.txt",
+	"corpus": "labeledTrainData.tsv"
+}

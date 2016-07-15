@@ -9,7 +9,7 @@ import numpy as np
 
 class Corpus(object):
 
-    def __init__(self, sentiment_corpus_file):
+    def __init__(self, sentiment_corpus_file, max_features):
         self.vocab = None
         self.sent_labels = []
         self.W_D_matrix = None
@@ -22,7 +22,7 @@ class Corpus(object):
                 all_txt.append(txt)
                 self.sent_labels.append(int(label))
                 i += 1
-        vectorizer = CountVectorizer(analyzer = "word", strip_accents = "unicode", stop_words = stopwords.words("english"), max_features = 100)
+        vectorizer = CountVectorizer(analyzer = "word", strip_accents = "unicode", stop_words = stopwords.words("english"), max_features = max_features)
         self.W_D_matrix = vectorizer.fit_transform(all_txt)
         self.vocab = vectorizer.vocabulary_
         self.V = len(self.vocab)

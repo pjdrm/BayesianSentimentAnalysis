@@ -7,6 +7,7 @@ from corpus import Corpus
 from model import ModelState
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
 def plot_results(results_file):
     with open(results_file) as r_file:
@@ -21,11 +22,14 @@ def plot_results(results_file):
         plt.show()
         
 if __name__ == '__main__':
-    results_file = "results.txt"
-    gamma_pi0 = 1
-    gamma_pi1 = 1
-    gamma_theta_val = 1
-    corpus = Corpus("labeledTrainData.tsv")
+    with open('config.txt') as data_file:    
+        config = json.load(data_file)
+    
+    results_file = config["results_file"]
+    gamma_pi0 = config["gamma_pi0"]
+    gamma_pi1 = config["gamma_pi1"]
+    gamma_theta_val = config["gamma_theta_val"]
+    corpus = Corpus(config["corpus"], config["max_features"])
     gamma_theta = np.full(corpus.V, gamma_theta_val)
     model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus.W_D_matrix.shape[0], corpus, results_file)
     

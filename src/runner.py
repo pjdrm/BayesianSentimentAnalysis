@@ -29,7 +29,11 @@ if __name__ == '__main__':
     gamma_pi0 = config["gamma_pi0"]
     gamma_pi1 = config["gamma_pi1"]
     gamma_theta_val = config["gamma_theta_val"]
-    corpus = Corpus(config["corpus"], config["max_features"])
+    maxDocs = config["maxDocs"]
+    if maxDocs == "None":
+        maxDocs = None
+        
+    corpus = Corpus(config["corpus"], config["max_features"], maxDocs)
     gamma_theta = np.full(corpus.V, gamma_theta_val)
     model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus.W_D_matrix.shape[0], corpus, results_file)
     

@@ -9,7 +9,7 @@ import numpy as np
 
 class Corpus(object):
 
-    def __init__(self, sentiment_corpus_file, max_features):
+    def __init__(self, sentiment_corpus_file, max_features, maxDocs=None):
         self.vocab = None
         self.sent_labels = []
         self.W_D_matrix = None
@@ -17,6 +17,9 @@ class Corpus(object):
         all_txt = []
         with open(sentiment_corpus_file, encoding="utf8") as f:
             lines = f.readlines()[1:]
+            if maxDocs != None:
+                lines = lines[:maxDocs]
+                 
             for lin in lines:
                 label, txt = self.process_lin(lin)
                 all_txt.append(txt)

@@ -1,5 +1,5 @@
 {
-	"max_features": 2000.0,
+	"max_features": 2000,
 	"gamma_pi0": 1.0,
 	"gamma_pi1": 1.0,
 	"gamma_theta_val": 1.0,

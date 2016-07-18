@@ -33,9 +33,9 @@ if __name__ == '__main__':
     gamma_theta = np.full(corpus.V, gamma_theta_val)
     model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus.W_D_matrix.shape[0], corpus, results_file)
     
-    n_iter = 50000
-    burn_in = 5000
-    lag = 25
+    n_iter = config["n_iter"]
+    burn_in = config["burn_in"]
+    lag = config["lag"]
     model_state.gibbs_sampler(n_iter, burn_in, lag)
     
     plot_results(results_file)

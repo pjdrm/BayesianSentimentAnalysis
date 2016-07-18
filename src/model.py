@@ -7,7 +7,6 @@ from dist_sampler import sample_bernouli, sample_beta, sample_dirichlet
 import numpy as np
 from sklearn.metrics import classification_report, f1_score
 import os.path
-from pympler.tracker import SummaryTracker
 
 class ModelState(object):
     def __init__(self, gamma_pi0, gamma_pi1, gamma_theta, N, corpus, results_file):
@@ -117,17 +116,11 @@ class ModelState(object):
     def gibbs_sampler(self, n_iter, burn_in, lag):
         lag_counter = lag
         iteration = 1
-        tracker = SummaryTracker()
         while iteration <= n_iter:
             print("Gibbs sampler iter %d" % (iteration))
-            #tracker.print_diff()
-            #print("L")
             self.sample_L()
-            #tracker.print_diff()
-            #print("Theta")
             self.sample_Theta0()
             self.sample_Theta1()
-            #tracker.print_diff()
             print("C0 %f C1 %f"  % (self.C0, self.C1))
             
             if burn_in > 0:

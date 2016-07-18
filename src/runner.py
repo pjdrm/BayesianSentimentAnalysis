@@ -3,11 +3,14 @@ Created on Jun 17, 2016
 
 @author: pedrom
 '''
-from corpus import Corpus
+import json
+
+from corpus import Corpus, Corpus_synthetic
+from dist_sampler import sample_dirichlet
+import matplotlib.pyplot as plt
 from model import ModelState
 import numpy as np
-import matplotlib.pyplot as plt
-import json
+
 
 def plot_results(results_file):
     with open(results_file) as r_file:
@@ -30,10 +33,16 @@ if __name__ == '__main__':
     gamma_pi1 = config["gamma_pi1"]
     gamma_theta_val = config["gamma_theta_val"]
     maxDocs = config["maxDocs"]
+    run_corpus_synthetic = config["run_corpus_synthetic"]
+    
     if maxDocs == "None":
         maxDocs = None
         
-    corpus = Corpus(config["corpus"], config["max_features"], maxDocs)
+    if run_corpus_synthetic == "True":
+        corpus = Corpus_synthetic(0.6, sample_dirichlet([0.5]*100), sample_dirichlet([0.5]*100), 100, 5)
+    else:
+        corpus = Corpus(config["corpus"], config["max_features"], maxDocs)
+        
     gamma_theta = np.full(corpus.V, gamma_theta_val)
     model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus.W_D_matrix.shape[0], corpus, results_file)
     

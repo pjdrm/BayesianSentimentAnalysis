@@ -147,11 +147,6 @@ class ModelState(object):
         self.estimated_L = np.rint(self.estimated_L)
         target_names = ['L0', 'L1']
         print(classification_report(self.corpus.sent_labels, self.estimated_L, target_names=target_names))
-        '''
-        self.sample_L()
-        self.sample_Theta0()
-        self.sample_Theta1()
-        '''
         
             
     def count_wi(self, docs, wi):

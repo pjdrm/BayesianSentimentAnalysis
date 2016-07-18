@@ -13,3 +13,6 @@ def sample_bernouli(pi, n_samples):
 
 def sample_dirichlet(alpha):
     return np.random.dirichlet(alpha)
+
+def sample_multinomial(n, pvals):
+    return np.random.multinomial(n, pvals)

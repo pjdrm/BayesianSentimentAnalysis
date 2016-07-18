@@ -3,9 +3,13 @@ Created on Jun 17, 2016
 
 @author: pedrom
 '''
-from sklearn.feature_extraction.text import CountVectorizer
 from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import CountVectorizer
+
+from dist_sampler import sample_bernouli, sample_multinomial
 import numpy as np
+from scipy import sparse
+
 
 class Corpus(object):
 
@@ -33,4 +37,18 @@ class Corpus(object):
         
     def process_lin(self, lin):
         split_lin = lin.split("\t")
-        return split_lin[1], split_lin[2] 
+        return split_lin[1], split_lin[2]
+    
+class Corpus_synthetic(object):
+    def __init__(self, pi, theta0, theta1, nDocs, n_word_draws):
+        self.sent_labels = sample_bernouli(pi, nDocs)
+        self.V = len(theta0)
+        docs = []
+        for label in self.sent_labels:
+            if label == 0:
+                word_vec = sample_multinomial(n_word_draws, theta0)
+            else:
+                word_vec = sample_multinomial(n_word_draws, theta1)
+            docs.append(word_vec)
+            
+        self.W_D_matrix = sparse.csr_matrix(docs)

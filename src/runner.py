@@ -50,7 +50,6 @@ if __name__ == '__main__':
     burn_in = config["burn_in"]
     lag = config["lag"]
     model_state.gibbs_sampler(n_iter, burn_in, lag)
-    
     plot_results(results_file)
     print("finish running")
             

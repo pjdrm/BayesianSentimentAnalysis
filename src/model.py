@@ -9,18 +9,20 @@ from sklearn.metrics import classification_report, f1_score
 import os.path
 
 class ModelState(object):
-    def __init__(self, gamma_pi0, gamma_pi1, gamma_theta, N, corpus, results_file):
+    def __init__(self, gamma_pi0, gamma_pi1, gamma_theta, corpus, results_file):
     
         self.results_file = results_file
         if os.path.isfile(results_file):
             os.remove(results_file)   
-            
+        
+        n_training = corpus.sent_labels_training.shape[0]
+        n_to_estimate =  corpus.W_D_matrix.shape[0]
+        
         self.corpus = corpus
-        self.N = N
-        self.L = np.zeros(N)
-        self.estimated_L = np.zeros(N)
-        self.C0 = 0
-        self.C1 = 0 
+        self.N = corpus.N
+        self.estimated_L = np.zeros(n_to_estimate)
+        self.C1 = np.count_nonzero(corpus.sent_labels_training)
+        self.C0 =  n_training - self.C1
         self.theta0 = None
         self.theta1 = None
         self.gamma_pi0 = gamma_pi0
@@ -28,22 +30,31 @@ class ModelState(object):
         self.gamma_theta = gamma_theta
         
         pi = sample_beta(self.gamma_pi0, self.gamma_pi1)
-        self.L = sample_bernouli(pi, self.N)
+        self.L = sample_bernouli(pi, n_to_estimate)
         self.theta0 = sample_dirichlet(self.gamma_theta)
         self.theta1 = sample_dirichlet(self.gamma_theta)
-        self.C1 = np.count_nonzero(self.L)
-        self.C0 = self.N - self.C1
+        zero_count_L = np.count_nonzero(self.L)
+        self.C1 += zero_count_L
+        self.C0 += n_to_estimate - zero_count_L
         
+        docs_L0, docs_L1 = self.group_by_L(self.L)
+        self.word_counts_L0 = corpus.W_D_matrix[docs_L0].sum(0)
+        self.word_counts_L1 = corpus.W_D_matrix[docs_L1].sum(0)
+        
+        docs_L0, docs_L1 = self.group_by_L(corpus.sent_labels_training)
+        self.word_counts_L0 += corpus.W_D_matrix_training[docs_L0].sum(0)
+        self.word_counts_L1 += corpus.W_D_matrix_training[docs_L1].sum(0)
+            
+    def group_by_L(self, labels):
         docs_L0 = []
         docs_L1 = []
-        for doc_id, Lj in enumerate(self.L):
+        for doc_id, Lj in enumerate(labels):
             if Lj == 0:
                 docs_L0.append(doc_id)
             else:
                 docs_L1.append(doc_id)
-        self.word_counts_L0 = corpus.W_D_matrix[docs_L0].sum(0)
-        self.word_counts_L1 = corpus.W_D_matrix[docs_L1].sum(0)
-            
+        return docs_L0, docs_L1
+        
     def sample_L(self):
         for j in range(len(self.L)):
             self.sample_Lj(j)

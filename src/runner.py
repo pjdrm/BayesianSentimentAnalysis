@@ -34,17 +34,24 @@ if __name__ == '__main__':
     gamma_theta_val = config["gamma_theta_val"]
     maxDocs = config["maxDocs"]
     run_corpus_synthetic = config["run_corpus_synthetic"]
+    n_training = config["n_training"]
     
     if maxDocs == "None":
         maxDocs = None
         
     if run_corpus_synthetic == "True":
-        corpus = Corpus_synthetic(0.6, sample_dirichlet([0.5]*100), sample_dirichlet([0.5]*100), 100, 5)
+        pi = 0.6
+        theta0 =  sample_dirichlet([0.5]*100)
+        theta1 = sample_dirichlet([0.5]*100)
+        nDocs = 1000
+        n_word_draws = 10
+        n_training = 100
+        corpus = Corpus_synthetic(pi, theta0, theta1, nDocs, n_word_draws, n_training)
     else:
-        corpus = Corpus(config["corpus"], config["max_features"], maxDocs)
+        corpus = Corpus(config["corpus"], config["max_features"], maxDocs, n_training)
         
     gamma_theta = np.full(corpus.V, gamma_theta_val)
-    model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus.W_D_matrix.shape[0], corpus, results_file)
+    model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus, results_file)
     
     n_iter = config["n_iter"]
     burn_in = config["burn_in"]

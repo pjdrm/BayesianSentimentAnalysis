@@ -33,6 +33,8 @@ class ModelState(object):
         self.L = sample_bernouli(pi, n_to_estimate)
         self.theta0 = sample_dirichlet(self.gamma_theta)
         self.theta1 = sample_dirichlet(self.gamma_theta)
+        self.estimated_theta0 = np.zeros(self.theta0.shape[0])
+        self.estimated_theta1 = np.zeros(self.theta1.shape[0])
         zero_count_L = np.count_nonzero(self.L)
         self.C1 += zero_count_L
         self.C0 += n_to_estimate - zero_count_L
@@ -114,7 +116,7 @@ class ModelState(object):
     
     def gibbs_sampler(self, n_iter, burn_in, lag):
         lag_counter = lag
-        iteration = 1
+        iteration = 1.0
         while iteration <= n_iter:
             print("Gibbs sampler iter %d" % (iteration))
             self.sample_L()
@@ -135,14 +137,18 @@ class ModelState(object):
                     print("Estimate iteration")
                     lag_counter = lag
                     self.estimated_L += self.L
+                    self.estimated_theta0 += self.theta0
+                    self.estimated_theta1 += self.theta1
                     
                     with open(self.results_file, "a") as f:
                         current_estimated_L = np.rint(self.estimated_L / iteration)
                         f.write(str(f1_score(self.corpus.sent_labels, current_estimated_L))+"\n")
                         
-                    iteration += 1
+                    iteration += 1.0
                 
         self.estimated_L /= iteration
         self.estimated_L = np.rint(self.estimated_L)
+        self.estimated_theta0 /= iteration
+        self.estimated_theta1 /= iteration
         target_names = ['L0', 'L1']
         print(classification_report(self.corpus.sent_labels, self.estimated_L, target_names=target_names))

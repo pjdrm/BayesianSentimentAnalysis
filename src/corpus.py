@@ -10,7 +10,6 @@ from dist_sampler import sample_bernouli, sample_multinomial
 import numpy as np
 from scipy import sparse
 
-
 class Corpus(object):
 
     def __init__(self, sentiment_corpus_file, max_features, maxDocs=None, n_training = 0):
@@ -46,7 +45,7 @@ class Corpus(object):
     
 class Corpus_synthetic(object):
     def __init__(self, pi, theta0, theta1, nDocs, n_word_draws, n_training = 0):
-        #fliping coins to determine the labels 
+        #fliping coins to determine the labels
         self.sent_labels = sample_bernouli(pi, nDocs)
         self.V = len(theta0)
         docs = []

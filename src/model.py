@@ -7,6 +7,7 @@ from dist_sampler import sample_bernouli, sample_beta, sample_dirichlet
 import numpy as np
 from sklearn.metrics import classification_report, f1_score
 import os.path
+from tqdm import trange
 
 class ModelState(object):
     def __init__(self, gamma_pi0, gamma_pi1, gamma_theta, corpus, results_file):
@@ -119,22 +120,22 @@ class ModelState(object):
     def gibbs_sampler(self, n_iter, burn_in, lag):
         lag_counter = lag
         iteration = 1.0
-        while iteration <= n_iter:
-            print("Gibbs sampler iter %d" % (iteration))
+        total_iterations = burn_in + n_iter*lag + n_iter
+        t = trange(total_iterations, desc='', leave=True)
+        for i in t:
             self.sample_L()
             self.sample_Theta0()
             self.sample_Theta1()
-            print("C0 %f C1 %f"  % (self.C0, self.C1))
             
             if burn_in > 0:
-                print("Burn in iteration %i" % (burn_in))
+                t.set_description("Burn-in iter %i C0 %d C1 %d" % (burn_in, self.C0, self.C1))
                 burn_in -= 1
             else:
                 if lag_counter > 0:
-                    print("Lag iteration")
+                    t.set_description("Lag iter %i\tC0 %d C1 %d" % (iteration, self.C0, self.C1))
                     lag_counter -= 1
                 else:
-                    print("Estimate iteration")
+                    t.set_description("Estimate iter %i\tC0 %d C1 %d" % (iteration, self.C0, self.C1))
                     lag_counter = lag
                     self.estimated_L += self.L
                     self.estimated_theta0 += self.theta0

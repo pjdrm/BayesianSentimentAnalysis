@@ -23,7 +23,8 @@ def plot_results(results_file):
             y.append(float(lin))
             
         plt.plot(x, y)
-        plt.ylabel('f1 score')
+        plt.ylabel('F1 score')
+        plt.xlabel('Iteration')
         plt.show()
         
 def plotPosterior(posteriors, labelDic, n, colors):
@@ -91,6 +92,4 @@ if __name__ == '__main__':
     
     if run_corpus_synthetic == "False":
         inv_vocab =  {v: k for k, v in corpus.vocab.items()}
-        plotPosterior([model_state.estimated_theta0, model_state.estimated_theta1], inv_vocab, 15, ['g', 'r'])
-    print("finish running")
-            
+        plotPosterior([model_state.estimated_theta0, model_state.estimated_theta1], inv_vocab, 10, ['g', 'r'])

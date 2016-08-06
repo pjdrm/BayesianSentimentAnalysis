@@ -46,6 +46,7 @@ class Corpus(object):
     
 class Corpus_synthetic(object):
     def __init__(self, pi, theta0, theta1, nDocs, n_word_draws, n_training = 0):
+        #fliping coins to determine the labels 
         self.sent_labels = sample_bernouli(pi, nDocs)
         self.V = len(theta0)
         docs = []

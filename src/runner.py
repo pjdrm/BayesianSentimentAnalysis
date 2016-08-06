@@ -4,7 +4,6 @@ Created on Jun 17, 2016
 @author: pedrom
 '''
 import json
-
 from corpus import Corpus, Corpus_synthetic
 from dist_sampler import sample_dirichlet
 import matplotlib.pyplot as plt
@@ -12,6 +11,7 @@ plt.rcdefaults()
 import operator
 from model import ModelState
 import numpy as np
+import sys
 
 
 def plot_results(results_file):
@@ -44,7 +44,11 @@ def plotPosterior(posteriors, labelDic, n, colors):
     plt.show()
         
 if __name__ == '__main__':
-    with open('config.txt') as data_file:    
+    if len(sys.argv) == 1:
+        config_file = 'config.txt'
+    else:
+        config_file = sys.argv[1]
+    with open(config_file) as data_file:    
         config = json.load(data_file)
     
     results_file = config["results_file"]
@@ -59,15 +63,22 @@ if __name__ == '__main__':
         maxDocs = None
         
     if run_corpus_synthetic == "True":
-        pi = 0.6
-        theta0 =  sample_dirichlet([0.5]*100)
-        theta1 = sample_dirichlet([0.5]*100)
-        nDocs = 300
-        n_word_draws = 10
-        n_training = 100
+        pi = config["synthetic_corpus"]["pi"]
+        
+        n_features = config["synthetic_corpus"]["n_features"]
+        theta0_symetric = config["synthetic_corpus"]["theta0"]
+        theta0 =  sample_dirichlet([theta0_symetric]*n_features)
+        
+        theta1_symetric = config["synthetic_corpus"]["theta1"]
+        theta1 =  sample_dirichlet([theta1_symetric]*n_features)
+        
+        nDocs = config["synthetic_corpus"]["nDocs"]
+        n_word_draws = config["synthetic_corpus"]["n_word_draws"]
         corpus = Corpus_synthetic(pi, theta0, theta1, nDocs, n_word_draws, n_training)
     else:
-        corpus = Corpus(config["corpus"], config["max_features"], maxDocs, n_training)
+        corpusPath = config["sentiment_corpus"]["corpus"]
+        maxFeatures = config["sentiment_corpus"]["max_features"]
+        corpus = Corpus(corpusPath, maxFeatures, maxDocs, n_training)
         
     gamma_theta = np.full(corpus.V, gamma_theta_val)
     model_state = ModelState(gamma_pi0, gamma_pi1, gamma_theta, corpus, results_file)
@@ -78,7 +89,8 @@ if __name__ == '__main__':
     model_state.gibbs_sampler(n_iter, burn_in, lag)
     plot_results(results_file)
     
-    inv_vocab =  {v: k for k, v in corpus.vocab.items()}
-    plotPosterior([model_state.estimated_theta0, model_state.estimated_theta1], inv_vocab, 15, ['g', 'r'])
+    if run_corpus_synthetic == "False":
+        inv_vocab =  {v: k for k, v in corpus.vocab.items()}
+        plotPosterior([model_state.estimated_theta0, model_state.estimated_theta1], inv_vocab, 15, ['g', 'r'])
     print("finish running")
             

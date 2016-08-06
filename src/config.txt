@@ -1,14 +1,26 @@
-{
-	"max_features": 1000,
-	"maxDocs": "None",
-	"n_training": 20000,
+{	
+	"run_corpus_synthetic": "False",
+	"results_file": "results.txt",
+	"n_training": 24000,
 	"gamma_pi0": 40.0,
 	"gamma_pi1": 40.0,
 	"gamma_theta_val": 1.0,
 	"n_iter": 20,
 	"burn_in": 0,
 	"lag": 0,
-	"results_file": "results.txt",
-	"corpus": "labeledTrainData.tsv",
-	"run_corpus_synthetic": "False"
+	"maxDocs": "None",
+	
+	"sentiment_corpus": {
+		"max_features": 1000,
+		"corpus": "labeledTrainData.tsv"
+	},
+	
+	"synthetic_corpus": {
+		"pi": 0.6,
+		"theta0": 0.5,
+		"theta1": 0.5,
+		"n_features": 100,
+		"nDocs": 300,
+		"n_word_draws": 100		
+	}
 }

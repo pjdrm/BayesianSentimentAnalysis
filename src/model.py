@@ -21,6 +21,7 @@ class ModelState(object):
         self.corpus = corpus
         self.N = corpus.N
         self.estimated_L = np.zeros(n_to_estimate)
+        #adding label counts of training instances
         self.C1 = np.count_nonzero(corpus.sent_labels_training)
         self.C0 =  n_training - self.C1
         self.theta0 = None
@@ -43,6 +44,7 @@ class ModelState(object):
         self.word_counts_L0 = corpus.W_D_matrix[docs_L0].sum(0)
         self.word_counts_L1 = corpus.W_D_matrix[docs_L1].sum(0)
         
+        #adding word counts of training instances
         docs_L0, docs_L1 = self.group_by_L(corpus.sent_labels_training)
         self.word_counts_L0 += corpus.W_D_matrix_training[docs_L0].sum(0)
         self.word_counts_L1 += corpus.W_D_matrix_training[docs_L1].sum(0)
@@ -127,8 +129,6 @@ class ModelState(object):
             if burn_in > 0:
                 print("Burn in iteration %i" % (burn_in))
                 burn_in -= 1
-                if burn_in < 4700:
-                    print()
             else:
                 if lag_counter > 0:
                     print("Lag iteration")

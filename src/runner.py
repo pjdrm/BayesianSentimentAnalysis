@@ -46,7 +46,7 @@ def plotPosterior(posteriors, labelDic, n, colors):
         
 if __name__ == '__main__':
     if len(sys.argv) == 1:
-        config_file = 'config.txt'
+        config_file = '../config.txt'
     else:
         config_file = sys.argv[1]
     with open(config_file) as data_file:    

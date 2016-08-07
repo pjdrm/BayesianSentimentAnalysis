@@ -3,6 +3,7 @@ This project is a python implementation of the paper "Gibbs Sampling for the Uni
 The main motivation for the project is to bridge the gap between understanding the paper and implementing it. In this context, a ipython notebook was writen to describe the code and the overall development process.
 
 #Requirements
+- python 3.x
 - matplotlib==1.3.1
 - nltk==3.2.1
 - numpy==1.11.1

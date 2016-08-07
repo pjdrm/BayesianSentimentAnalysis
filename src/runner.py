@@ -67,11 +67,9 @@ if __name__ == '__main__':
         pi = config["synthetic_corpus"]["pi"]
         
         n_features = config["synthetic_corpus"]["n_features"]
-        theta0_symetric = config["synthetic_corpus"]["theta0"]
-        theta0 =  sample_dirichlet([theta0_symetric]*n_features)
-        
-        theta1_symetric = config["synthetic_corpus"]["theta1"]
-        theta1 =  sample_dirichlet([theta1_symetric]*n_features)
+        gamma_theta = config["synthetic_corpus"]["gamma_theta"]
+        theta0 =  sample_dirichlet([gamma_theta]*n_features)
+        theta1 =  sample_dirichlet([gamma_theta]*n_features)
         
         nDocs = config["synthetic_corpus"]["nDocs"]
         n_word_draws = config["synthetic_corpus"]["n_word_draws"]

@@ -31,6 +31,10 @@ class Corpus(object):
         vectorizer = CountVectorizer(analyzer = "word", strip_accents = "unicode", stop_words = stopwords.words("english"), max_features = max_features)
         self.W_D_matrix = vectorizer.fit_transform(all_txt)
         self.N = self.W_D_matrix.shape[0]
+        
+        if self.N < n_training:
+            raise ValueError('Bad configuration file: n_training > size of corpus')
+        
         self.W_D_matrix_training = self.W_D_matrix[:n_training]
         self.W_D_matrix = self.W_D_matrix[n_training:]
         self.vocab = vectorizer.vocabulary_
@@ -58,6 +62,10 @@ class Corpus_synthetic(object):
             
         self.W_D_matrix = sparse.csr_matrix(docs)
         self.N = self.W_D_matrix.shape[0]
+        
+        if self.N < n_training:
+            raise ValueError('Bad configuration file: n_training > size of corpus')
+        
         self.W_D_matrix_training = self.W_D_matrix[:n_training]
         self.W_D_matrix = self.W_D_matrix[n_training:]
         self.sent_labels_training = self.sent_labels[:n_training]

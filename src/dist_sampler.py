@@ -1,5 +1,5 @@
 '''
-Created on Jun 17, 2016
+Copyright Pedro Mota 2016
 
 @author: pedrom
 '''

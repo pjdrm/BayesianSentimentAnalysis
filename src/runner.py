@@ -13,7 +13,6 @@ from model import ModelState
 import numpy as np
 import sys
 
-
 def plot_results(results_file):
     with open(results_file) as r_file:
         lins = r_file.readlines()[:-1]
